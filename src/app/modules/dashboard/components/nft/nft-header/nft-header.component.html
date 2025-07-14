@@ -1,0 +1,28 @@
+<div class="mb-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+  <div>
+    <h3 class="text-foreground font-semibold">Construye tu robot</h3>
+    <div class="text-muted-foreground space-x-1 text-xs font-medium">
+      <a href="" class="hover:text-primary">Dashboards</a>
+      <span> - Bots</span>
+    </div>
+  </div>
+  <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
+    <button
+      (click)="redirectToCredentials()"
+      class="bg-muted text-muted-foreground hover:text-foreground rounded-md px-4 py-2.5 text-xs font-semibold w-full sm:w-auto">
+      Configurar credenciales
+    </button>
+    <button
+      [disabled]="!crendentials.length"
+      (click)="openCreateBotModal()"
+      class="bg-primary text-primary-foreground rounded-md px-4 py-2.5 text-xs font-semibold w-full sm:w-auto">
+      Construir robot
+    </button>
+  </div>
+</div>
+
+<app-create-bot-modal
+  *ngIf="showCreateBotModal"
+  (close)="closeCreateBotModal()"
+  (create)="handleCreateBot($event)">
+</app-create-bot-modal>

@@ -1,0 +1,27 @@
+<div class="flex min-h-screen w-full overflow-hidden">
+  <div class="auth-bg bg-primary hidden flex-1 items-center justify-center bg-cover lg:flex">
+    <div class="max-w-2xl space-y-4 p-4 md:p-8 text-center text-white">
+      <img src="./assets/images/logo-bot.png" alt="Xmart Bot Dashboard" class="w-32 md:w-48 lg:w-64 mx-auto" />
+      <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold">Software Algorítmico Financiero</h1>
+      <p class="text-xs md:text-sm font-light px-2 md:px-4">
+        En Xmart Bot, estamos transformando el futuro de las finanzas a través de soluciones tecnológicas innovadoras.
+        Nuestro compromiso es democratizar el acceso a herramientas financieras avanzadas, ofreciendo
+        <span class="cursor-pointer font-medium text-yellow-400">soluciones personalizadas</span> que maximizan tus resultados y
+        <span class="cursor-pointer font-medium text-yellow-400">simplifican tus operaciones.</span>
+        Con un equipo de expertos en tecnología y finanzas, creamos un ecosistema donde la innovación y la excelencia
+        trabajan en perfecta armonía para tu beneficio.
+      </p>
+    </div>
+  </div>
+  <div class="bg-background flex flex-1 items-center justify-center p-4 md:p-6">
+    <div class="w-full max-w-md overflow-y-auto">
+      <div class="flex flex-col items-center justify-center gap-2 mb-6">
+        <img src="./assets/images/logo-bot.png" alt="Xmart Bot" class="w-16 md:w-20 lg:hidden" />
+        <b class="text-lg md:text-xl text-foreground font-bold">Xmart Bot</b>
+      </div>
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 md:p-6">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

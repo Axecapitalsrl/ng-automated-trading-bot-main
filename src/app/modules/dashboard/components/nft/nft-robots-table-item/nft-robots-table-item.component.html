@@ -1,0 +1,34 @@
+<td class="py-2 pr-2">
+  <div class="flex items-center">
+    <img src="assets/images/binance-svgrepo-com.svg" class="h-8 w-8" alt="Binance" />
+    <div class="flex flex-col justify-items-start ml-2">
+      <a href="#" class="text-foreground text-sm font-semibold">{{ robot.nombre }}</a>
+    </div>
+  </div>
+</td>
+<td class="py-2 pl-2 text-right">
+  <span class="text-muted-foreground text-sm font-semibold">{{ robot.exchange }}</span>
+</td>
+<td class="py-2 pl-2 text-right">
+  <span class="text-muted-foreground text-sm font-semibold">{{ robot.par }}</span>
+</td>
+<td class="py-2 pl-2 text-right">
+  <span class="text-muted-foreground text-sm font-semibold">{{ robot.rendimiento }}</span>
+</td>
+<td class="py-2 pl-2 text-right">
+  <span [class]="robot.estado === 'Activo' ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'" class="text-sm font-bold">
+    {{ robot.estado }}
+  </span>
+</td>
+<td class="py-2 pl-2 text-right">
+  <span class="text-muted-foreground text-sm font-semibold">{{ robot.tiempo }}</span>
+</td>
+<td class="py-2 pl-2 text-right">
+  <div class="flex justify-end">
+    <button
+      href="#"
+      class="bg-card text-muted-foreground hover:bg-muted hover:text-foreground flex h-7 w-7 items-center justify-center rounded-md">
+      <svg-icon src="assets/icons/heroicons/outline/arrow-sm-right.svg" [svgClass]="'h-5 w-5'"> </svg-icon>
+    </button>
+  </div>
+</td>

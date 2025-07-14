@@ -1,0 +1,192 @@
+<!-- Binance Table -->
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-4 flex justify-between">
+    <div class="inline-block">
+      <h3 class="text-foreground font-semibold">Mi balance</h3>
+    </div>
+  </div>
+
+  <!-- Binance Section -->
+  <div class="bg-card border-border mb-8 flex-col rounded-lg border shadow-sm">
+    <div class="hover:bg-card/80 flex cursor-pointer items-center justify-between p-6" (click)="toggleBinance()">
+      <div class="flex items-center space-x-3">
+        <img src="assets/images/binance-svgrepo-com.svg" class="h-8 w-8" alt="Binance" />
+        <h3 class="text-md text-foreground font-bold">Balance Binance</h3>
+      </div>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        [class.rotate-180]="!isBinanceExpanded"
+        class="text-muted-foreground h-5 w-5 transform transition-transform duration-200"
+        viewBox="0 0 20 20"
+        fill="currentColor">
+        <path
+          fill-rule="evenodd"
+          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+          clip-rule="evenodd" />
+      </svg>
+    </div>
+
+    <div class="relative overflow-hidden" *ngIf="isBinanceExpanded" [@expandCollapse]>
+      <div class="border-border border-t">
+        <div class="max-h-[400px] overflow-y-auto px-6 py-4">
+          <div class="overflow-x-auto">
+            <table class="min-w-[600px] w-full table-auto">
+              <thead class="bg-card text-muted-foreground sticky top-0 text-xs uppercase">
+                <tr>
+                  <th class="min-w-[120px] py-3 px-4 text-left">Asset</th>
+                  <th class="min-w-[120px] py-3 px-4 text-right">Spot</th>
+                  <th class="min-w-[120px] py-3 px-4 text-right">Futuros</th>
+                  <th class="min-w-[120px] py-3 px-4 text-right">Fondos</th>
+                  <th class="min-w-[120px] py-3 px-4 text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="loading$ | async">
+                  <td colspan="5" class="py-4 text-center">
+                    <div class="flex justify-center">
+                      <svg
+                        class="text-primary h-8 w-8 animate-spin"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24">
+                        <circle
+                          class="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          stroke-width="4"></circle>
+                        <path
+                          class="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    </div>
+                  </td>
+                </tr>
+                <ng-container *ngIf="!(loading$ | async)">
+                  <ng-container *ngFor="let credential of balances?.exchanges?.binance?.data">
+                    <ng-container *ngFor="let spot of credential?.balances?.spot">
+                      <tr class="border-border/50 hover:bg-muted/50 border-b">
+                        <td class="py-2 text-left">
+                          <span class="text-foreground text-sm font-semibold">{{ spot?.asset || '-' }}</span>
+                        </td>
+                        <td class="py-2 text-right">
+                          <span class="text-foreground text-sm">{{ spot?.free || '-' }}</span>
+                        </td>
+                        <td class="py-2 text-right">
+                          <span class="text-foreground text-sm">
+                            {{ credential?.balances?.futures?.[0]?.balance || '-' }}
+                          </span>
+                        </td>
+                        <td class="py-2 text-right">
+                          <span class="text-foreground text-sm">
+                            {{
+                              (credential?.balances?.funding || [] | filter: 'asset':spot?.asset || '')[0]?.free || '-'
+                            }}
+                          </span>
+                        </td>
+                        <td class="py-2 text-right">
+                          <span class="text-foreground text-sm">
+                            {{ calculateTotal(spot, credential) }}
+                          </span>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bitget Section -->
+  <div class="bg-card border-border mb-8 flex-col rounded-lg border shadow-sm">
+    <div class="hover:bg-card/80 flex cursor-pointer items-center justify-between p-6" (click)="toggleBitget()">
+      <div class="flex items-center space-x-3">
+        <img src="assets/images/bitget-token-new-bgb-logo.svg" class="h-8 w-8" alt="Bitget" />
+        <h3 class="text-md text-foreground font-bold">Balance Bitget</h3>
+      </div>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        [class.rotate-180]="!isBitgetExpanded"
+        class="text-muted-foreground h-5 w-5 transform transition-transform duration-200"
+        viewBox="0 0 20 20"
+        fill="currentColor">
+        <path
+          fill-rule="evenodd"
+          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+          clip-rule="evenodd" />
+      </svg>
+    </div>
+
+    <div class="relative overflow-hidden" *ngIf="isBitgetExpanded" [@expandCollapse]>
+      <div class="border-border border-t">
+        <div class="max-h-[400px] overflow-y-auto px-6 py-4">
+          <div class="overflow-x-auto">
+            <table class="min-w-[500px] w-full table-auto">
+              <thead class="bg-card text-muted-foreground sticky top-0 text-xs uppercase">
+                <tr>
+                  <th class="min-w-[120px] py-3 px-4 text-left">Asset</th>
+                  <th class="min-w-[120px] py-3 px-4 text-right">Disponible</th>
+                  <th class="min-w-[120px] py-3 px-4 text-right">Bloqueado</th>
+                  <th class="min-w-[120px] py-3 px-4 text-right">Futuros</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="loading$ | async">
+                  <td colspan="4" class="py-4 text-center">
+                    <div class="flex justify-center">
+                      <svg
+                        class="text-primary h-8 w-8 animate-spin"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24">
+                        <circle
+                          class="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          stroke-width="4"></circle>
+                        <path
+                          class="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    </div>
+                  </td>
+                </tr>
+                <ng-container *ngIf="!(loading$ | async)">
+                  <ng-container *ngFor="let credential of balances?.exchanges?.bitget?.data">
+                    <tr
+                      *ngFor="let spot of credential?.balances?.data?.spot?.data"
+                      class="border-border/50 hover:bg-muted/50 border-b">
+                      <td class="py-2 text-left">
+                        <span class="text-foreground text-sm font-semibold">{{ spot?.coin || '-' }}</span>
+                      </td>
+                      <td class="py-2 text-right">
+                        <span class="text-foreground text-sm">{{ spot?.available || '-' }}</span>
+                      </td>
+                      <td class="py-2 text-right">
+                        <span class="text-foreground text-sm">{{ spot?.frozen || '-' }}</span>
+                      </td>
+                      <td class="py-2 text-right">
+                        <span class="text-foreground text-sm">
+                          {{ credential?.balances?.data?.futures_usdt?.data?.[0]?.available || '-' }}
+                        </span>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

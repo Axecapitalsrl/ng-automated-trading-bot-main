@@ -1,0 +1,35 @@
+<td class="py-2 pr-2">
+  <div class="flex items-center">
+    <img [src]="operation.image" class="h-8 w-8" [alt]="operation.title" />
+    <div class="ml-2 flex flex-col justify-items-start">
+      <a href="#" class="text-foreground text-sm font-semibold">{{ operation.title }}</a>
+    </div>
+  </div>
+</td>
+<td class="py-2 pl-2 text-right">
+  <span class="text-muted-foreground text-sm font-semibold">{{ operation.creator }}</span>
+</td>
+<td class="py-2 pl-2 text-right">
+  <span class="text-muted-foreground text-sm font-semibold">{{ operation.ending_in }}</span>
+</td>
+<td class="py-2 pl-2 text-right">
+  <span class="text-muted-foreground text-sm font-semibold">{{ operation.last_bid }}</span>
+</td>
+<td class="py-2 pl-2 text-right">
+  <span class="text-muted-foreground text-sm font-semibold">{{ operation.price }}</span>
+</td>
+<td class="py-2 pl-2 text-right">
+  <span class="text-muted-foreground text-sm font-semibold">{{ operation.instant_price }}</span>
+</td>
+<td class="py-2 pl-2 text-right">
+  <span class="text-muted-foreground text-sm font-semibold">{{ operation.profit || '-' }}</span>
+</td>
+<td class="py-2 pl-2 text-right">
+  <div class="flex justify-end">
+    <button
+      href="#"
+      class="bg-card text-muted-foreground hover:bg-muted hover:text-foreground flex h-7 w-7 items-center justify-center rounded-md">
+      <svg-icon src="assets/icons/heroicons/outline/arrow-sm-right.svg" [svgClass]="'h-5 w-5'"> </svg-icon>
+    </button>
+  </div>
+</td>

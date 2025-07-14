@@ -1,0 +1,39 @@
+<div>
+  <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+    <div>
+      <h3 class="text-foreground font-semibold">Mi Perfil</h3>
+      <div class="text-muted-foreground space-x-1 text-xs font-medium">
+        <a href="" class="hover:text-primary">Dashboards</a>
+        <span> - Perfil</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-background mt-8 w-full flex-col rounded-lg px-4 py-6 sm:px-8 sm:py-8">
+    <div class="mb-8 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+      <div class="bg-primary/10 flex h-20 w-20 items-center justify-center rounded-full">
+        <img src="assets/images/user.jpg" alt="Logo" class="h-20 w-20 rounded-full" />
+      </div>
+      <div>
+        <h2 class="text-foreground text-2xl font-bold">{{ user?.full_name }}</h2>
+        <p class="text-muted-foreground">{{ user?.email }}</p>
+      </div>
+    </div>
+
+    <div class="grid gap-4 grid-cols-1 md:grid-cols-2">
+      <div class="space-y-2">
+        <h3 class="text-foreground font-semibold">ID de Usuario</h3>
+        <p class="text-muted-foreground">{{ user?.user_id }}</p>
+      </div>
+      <div class="space-y-2">
+        <h3 class="text-foreground font-semibold">Estado</h3>
+        <div class="flex items-center">
+          <span class="bg-green-500/10 text-green-500 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
+            {{ user?.status }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

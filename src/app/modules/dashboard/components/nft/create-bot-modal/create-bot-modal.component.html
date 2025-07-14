@@ -1,0 +1,179 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center">
+  <div class="bg-background w-full max-w-md rounded-lg p-6">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-black dark:text-white">{{ isEditMode ? 'Editar Bot' : 'Crear Bot' }}</h2>
+      <button
+        (click)="closeModal()"
+        class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <form [formGroup]="createBotForm" (ngSubmit)="onSubmit()">
+      <div class="mb-4">
+        <label class="text-muted-foreground mb-2 block text-sm">Tipo de Bot</label>
+        <select
+          formControlName="bot_type_id"
+          (change)="onBotTypeChange($event)"
+          class="bg-muted text-foreground w-full rounded-md border p-2">
+          <option value="">Seleccionar tipo</option>
+          <option *ngFor="let type of botTypes" [value]="type.bot_type_id">{{ type.name }}</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label class="text-muted-foreground mb-2 block text-sm">Credenciales</label>
+        <select formControlName="credential_id" class="bg-muted text-foreground w-full rounded-md border p-2">
+          <option value="">Seleccionar credenciales</option>
+          <option *ngFor="let credential of credentials" [value]="credential.credential_id">
+            {{ credential.exchange.name }}
+          </option>
+        </select>
+      </div>
+
+      <ng-container *ngIf="!isOLBot">
+        <div class="mb-4">
+          <label class="text-muted-foreground mb-2 block text-sm">Monto</label>
+          <input
+            type="number"
+            formControlName="amount"
+            class="bg-muted text-foreground w-full rounded-md border p-2"
+            placeholder="Ingrese el monto" />
+          <div
+            *ngIf="
+              (createBotForm.get('amount')?.invalid && createBotForm.get('amount')?.touched) ||
+              (submitted && createBotForm.get('amount')?.invalid)
+            "
+            class="text-destructive mt-1 flex items-center text-sm">
+            <svg-icon
+              src="assets/icons/heroicons/outline/exclamation-circle.svg"
+              [svgClass]="'h-4 w-4 mr-1'"
+              class="cursor-help"
+              [title]="'El monto mínimo es de 20 USDT'">
+            </svg-icon>
+            <span>El monto mínimo es de 20 USDT</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="isOLBot">
+        <div class="mb-4">
+          <label class="text-muted-foreground mb-2 block text-sm">Monto Mínimo de Inversión</label>
+          <input
+            type="number"
+            formControlName="amount_min"
+            class="bg-muted text-foreground w-full rounded-md border p-2"
+            placeholder="Ingrese el monto mínimo" />
+          <div
+            *ngIf="
+              (createBotForm.get('amount_min')?.invalid && createBotForm.get('amount_min')?.touched) ||
+              (submitted && createBotForm.get('amount_min')?.invalid)
+            "
+            class="text-destructive mt-1 flex items-center text-sm">
+            <svg-icon
+              src="assets/icons/heroicons/outline/exclamation-circle.svg"
+              [svgClass]="'h-4 w-4 mr-1'"
+              class="cursor-help"
+              [title]="'El monto mínimo es de 20 USDT'">
+            </svg-icon>
+            <span>El monto mínimo es de 20 USDT</span>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="text-muted-foreground mb-2 block text-sm">Monto Máximo de Inversión</label>
+          <input
+            type="number"
+            formControlName="amount_max"
+            class="bg-muted text-foreground w-full rounded-md border p-2"
+            placeholder="Ingrese el monto máximo" />
+          <div
+            *ngIf="
+              (createBotForm.get('amount_max')?.invalid && createBotForm.get('amount_max')?.touched) ||
+              (submitted && createBotForm.get('amount_max')?.invalid)
+            "
+            class="text-destructive mt-1 flex items-center text-sm">
+            <svg-icon
+              src="assets/icons/heroicons/outline/exclamation-circle.svg"
+              [svgClass]="'h-4 w-4 mr-1'"
+              class="cursor-help"
+              [title]="'El monto mínimo es de 20 USDT'">
+            </svg-icon>
+            <span>El monto mínimo es de 20 USDT</span>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="text-muted-foreground mb-2 block text-sm">Stop Loss (%)</label>
+          <input
+            type="number"
+            formControlName="stop_loss"
+            class="bg-muted text-foreground w-full rounded-md border p-2"
+            placeholder="Ingrese el stop loss" />
+          <div
+            *ngIf="
+              (createBotForm.get('stop_loss')?.invalid && createBotForm.get('stop_loss')?.touched) ||
+              (submitted && createBotForm.get('stop_loss')?.invalid)
+            "
+            class="text-destructive mt-1 flex items-center text-sm">
+            <svg-icon
+              src="assets/icons/heroicons/outline/exclamation-circle.svg"
+              [svgClass]="'h-4 w-4 mr-1'"
+              class="cursor-help"
+              [title]="'El stop loss debe estar entre 1 y 100'">
+            </svg-icon>
+            <span>El stop loss debe estar entre 1 y 100</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="mb-4">
+        <label class="text-muted-foreground mb-2 block text-sm">Moneda</label>
+        <select formControlName="currencies" class="bg-muted text-foreground w-full rounded-md border p-2">
+          <option [defaultSelected]="true" value="USDT">USDT</option>
+        </select>
+      </div>
+
+      <div class="mb-4" *ngIf="isEditMode">
+        <label class="text-muted-foreground mb-2 block text-sm">Estado</label>
+        <div class="flex items-center">
+          <div
+            role="switch"
+            [attr.aria-checked]="createBotForm.get('status')?.value === 'ACTIVE'"
+            (click)="toggleStatus()"
+            class="relative inline-flex cursor-pointer items-center">
+            <div class="relative">
+              <div
+                [class.bg-green-500]="createBotForm.get('status')?.value === 'ACTIVE'"
+                [class.bg-yellow-400]="createBotForm.get('status')?.value === 'PAUSED'"
+                class="h-6 w-11 rounded-full shadow-inner transition-colors duration-200 ease-in-out"></div>
+              <div
+                [class.translate-x-6]="createBotForm.get('status')?.value === 'ACTIVE'"
+                [class.translate-x-0]="createBotForm.get('status')?.value === 'PAUSED'"
+                class="absolute inset-y-0 left-0 inline-block h-6 w-5 transform rounded-full bg-white shadow transition-transform duration-200 ease-in-out"></div>
+            </div>
+            <span class="text-foreground ml-3 text-sm font-medium">
+              {{ createBotForm.get('status')?.value === 'ACTIVE' ? 'Activo' : 'Pausado' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end space-x-2">
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="bg-muted text-muted-foreground hover:text-foreground rounded-md px-4 py-2 text-sm">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          [disabled]="!createBotForm.valid"
+          class="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm">
+          {{ isEditMode ? 'Actualizar' : 'Crear' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

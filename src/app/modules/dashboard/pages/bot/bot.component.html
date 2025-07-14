@@ -1,0 +1,257 @@
+<div>
+  <div class="mb-4 flex justify-between">
+    <div class="inline-block">
+      <h3 class="text-foreground font-semibold">Mi balance</h3>
+    </div>
+  </div>
+
+  <!-- Total Balance Section -->
+  <div class="mb-8 flex-col rounded-lg bg-white shadow-sm dark:bg-black">
+    <div
+      class="flex cursor-pointer items-center justify-between p-6 hover:bg-gray-50 dark:hover:bg-gray-700"
+      (click)="toggleSummary()">
+      <div class="flex items-center space-x-3">
+        <h3 class="text-md font-bold text-black dark:text-white">Balance Total</h3>
+      </div>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        [class.rotate-180]="!isSummaryExpanded"
+        class="text-muted-foreground h-5 w-5 transform transition-transform duration-200"
+        viewBox="0 0 20 20"
+        fill="currentColor">
+        <path
+          fill-rule="evenodd"
+          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+          clip-rule="evenodd" />
+      </svg>
+    </div>
+
+    <div class="relative overflow-hidden" *ngIf="isSummaryExpanded">
+      <div class="border-border border-t">
+        <div class="max-h-[400px] overflow-y-auto px-6 py-4">
+          <div class="overflow-x-auto">
+            <table class="min-w-[700px] w-full table-auto">
+              <thead class="text-muted-foreground sticky top-0 bg-white text-xs uppercase dark:bg-black">
+                <tr>
+                  <th class="min-w-[120px] py-3 px-4 text-left">Exchange</th>
+                  <th class="min-w-[100px] py-3 px-4 text-right">Asset</th>
+                  <th class="min-w-[120px] py-3 px-4 text-right">Spot</th>
+                  <th class="min-w-[120px] py-3 px-4 text-right">Futuros</th>
+                  <th class="min-w-[120px] py-3 px-4 text-right">Fondos</th>
+                  <th class="min-w-[120px] py-3 px-4 text-right">Total</th>
+                  <th class="min-w-[100px] py-3 px-4 text-right">Detalle</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white dark:bg-black">
+                <tr *ngIf="loadingBalances$ | async">
+                  <td colspan="7" class="py-4 text-center">
+                    <div class="flex justify-center">
+                      <svg
+                        class="text-primary h-8 w-8 animate-spin"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24">
+                        <circle
+                          class="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          stroke-width="4"></circle>
+                        <path
+                          class="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    </div>
+                  </td>
+                </tr>
+                <ng-container *ngIf="!(loadingBalances$ | async)">
+                  <tr *ngIf="!balances?.exchanges?.binance?.data?.length && !balances?.exchanges?.bitget?.data?.length">
+                    <td colspan="7" class="text-muted-foreground py-4 text-center">Sin datos</td>
+                  </tr>
+                  
+                  <!-- Binance Data -->
+                  <ng-container *ngFor="let credential of balances?.exchanges?.binance?.data">
+                    <tr *ngFor="let spot of (credential?.balances?.spot || []) | filter: 'asset':'USDT'" class="border-border/50 border-b hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <td class="py-2 pr-2">
+                        <div class="flex items-center">
+                          <img src="assets/images/binance-svgrepo-com.svg" class="h-8 w-8" alt="Binance" />
+                          <div class="ml-2 flex flex-col justify-items-start">
+                            <a href="#" class="text-foreground text-sm font-semibold">Binance</a>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="py-2 pl-2 text-right">
+                        <span class="text-muted-foreground text-sm font-semibold">{{ spot?.asset || '-' }}</span>
+                      </td>
+                      <td class="py-2 pl-2 text-right">
+                        <span class="text-muted-foreground text-sm font-semibold">{{ (spot?.free | number:'1.0-4') || '-' }}</span>
+                      </td>
+                      <td class="py-2 pl-2 text-right">
+                        <span class="text-muted-foreground text-sm font-semibold">
+                          {{ ((credential?.balances?.futures || []) | filter: 'asset':'USDT')[0]?.balance || '-' }}
+                        </span>
+                      </td>
+                      <td class="py-2 pl-2 text-right">
+                        <span class="text-muted-foreground text-sm font-semibold">
+                          {{ ((credential?.balances?.funding || []) | filter: 'asset':'USDT')[0]?.free || '-' }}
+                        </span>
+                      </td>
+                      <td class="py-2 pl-2 text-right">
+                        <span class="text-muted-foreground text-sm font-semibold">
+                          {{ (calculateTotal(spot, credential) | number:'1.0-4') || '-' }}
+                        </span>
+                      </td>
+                      <td class="py-2 pl-2 text-right">
+                        <div class="flex justify-end">
+                          <a
+                            (click)="redirectToBalance()"
+                            class="text-muted-foreground hover:text-foreground text-sm font-semibold cursor-pointer">
+                            Ver
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-container>
+
+                  <!-- Bitget Data -->
+                  <ng-container *ngFor="let credential of balances?.exchanges?.bitget?.data">
+                    <ng-container *ngFor="let spot of credential?.balances?.data?.spot?.data">
+                      <tr *ngIf="spot?.coin === 'USDT'" class="border-border/50 border-b hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td class="py-2 pr-2">
+                          <div class="flex items-center">
+                            <img src="assets/images/bitget-token-new-bgb-logo.svg" class="h-8 w-8" alt="Bitget" />
+                            <div class="ml-2 flex flex-col justify-items-start">
+                              <a href="#" class="text-foreground text-sm font-semibold">Bitget</a>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="py-2 pl-2 text-right">
+                          <span class="text-muted-foreground text-sm font-semibold">{{ spot?.coin || '-' }}</span>
+                        </td>
+                        <td class="py-2 pl-2 text-right">
+                          <span class="text-muted-foreground text-sm font-semibold">{{ (spot?.available | number:'1.0-4') || '-' }}</span>
+                        </td>
+                        <td class="py-2 pl-2 text-right">
+                          <span class="text-muted-foreground text-sm font-semibold">-</span>
+                        </td>
+                        <td class="py-2 pl-2 text-right">
+                          <span class="text-muted-foreground text-sm font-semibold">-</span>
+                        </td>
+                        <td class="py-2 pl-2 text-right">
+                          <span class="text-muted-foreground text-sm font-semibold">
+                            {{ (spot?.available | number:'1.0-4') || '-' }}
+                          </span>
+                        </td>
+                        <td class="py-2 pl-2 text-right">
+                          <div class="flex justify-end">
+                            <a
+                              (click)="redirectToBalance()"
+                              class="text-muted-foreground hover:text-foreground text-sm font-semibold cursor-pointer">
+                              Ver
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-nft-header [crendentials]="credentials" class="mb-8"></app-nft-header>
+
+  <div class="mt-12 grid grid-cols-1 md:grid-cols-1">
+    <div
+      nft-robots-table
+      [bots]="bots"
+      (editBot)="openModal($event)"
+      (deleteBot)="deleteBot($event)"
+      class="md:col-span-1 xl:col-span-1"></div>
+
+    <div nft-auctions-table [operations]="filteredOperations" class="mt-8 md:col-span-1 xl:col-span-1"></div>
+
+    <!-- Paginación -->
+    <div class="mt-4 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <span class="text-muted-foreground text-sm">Mostrar</span>
+        <select
+          [value]="itemsPerPage"
+          (change)="onItemsPerPageChange($event)"
+          class="bg-muted text-muted-foreground rounded-md border px-2 py-1 text-sm">
+          <option [value]="10">10</option>
+          <option [value]="20">20</option>
+          <option [value]="50">50</option>
+          <option [value]="100">100</option>
+        </select>
+        <span class="text-muted-foreground text-sm">por página</span>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <button
+          (click)="onPageChange(currentPage - 1)"
+          [disabled]="currentPage === 1"
+          class="bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground rounded-md px-3 py-1 text-sm transition-colors disabled:opacity-50">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="h-4 w-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          </svg>
+        </button>
+
+        @if (pages[0] > 1) {
+        <button
+          (click)="onPageChange(1)"
+          class="bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground rounded-md px-3 py-1 text-sm transition-colors">
+          1
+        </button>
+        @if (pages[0] > 2) {
+        <span class="text-muted-foreground px-2">...</span>
+        } } @for (page of pages; track page) {
+        <button
+          (click)="onPageChange(page)"
+          [class.bg-primary]="page === currentPage"
+          [class.text-primary-foreground]="page === currentPage"
+          class="bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground rounded-md px-3 py-1 text-sm transition-colors">
+          {{ page }}
+        </button>
+        } @if (pages[pages.length - 1] < totalPages) { @if (pages[pages.length - 1] < totalPages - 1) {
+        <span class="text-muted-foreground px-2">...</span>
+        }
+        <button
+          (click)="onPageChange(totalPages)"
+          class="bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground rounded-md px-3 py-1 text-sm transition-colors">
+          {{ totalPages }}
+        </button>
+        }
+
+        <button
+          (click)="onPageChange(currentPage + 1)"
+          [disabled]="currentPage === totalPages"
+          class="bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground rounded-md px-3 py-1 text-sm transition-colors disabled:opacity-50">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="h-4 w-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <app-create-bot-modal *ngIf="showModal" [bot]="botToEdit" (close)="showModal = false"> </app-create-bot-modal>
+</div>

@@ -1,0 +1,117 @@
+<div *ngIf="isOpen && operation" class="fixed inset-0 z-50 flex items-center justify-center">
+  <!-- Background overlay -->
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" aria-hidden="true"></div>
+
+  <!-- Modal panel -->
+  <div
+    class="bg-background relative mx-auto w-full max-w-2xl transform overflow-hidden rounded-lg shadow-xl transition-all">
+    <div class="bg-background px-6 py-6">
+      <!-- Header -->
+      <div class="border-border flex items-center justify-between border-b pb-4">
+        <div class="flex items-center">
+          <img src="assets/images/binance-svgrepo-com.svg" class="h-8 w-8" alt="Binance" />
+          <h3 class="text-foreground ml-2 text-lg font-semibold">{{ operation.botType.name }}</h3>
+        </div>
+        <button (click)="closeModalFn()" class="text-muted-foreground hover:text-foreground">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Content -->
+      <div class="mt-4 space-y-4">
+        <!-- Status -->
+        <div class="flex items-center justify-between">
+          <span class="text-muted-foreground">Estado</span>
+          <span [ngClass]="getStatusColor(operation.details.success)" class="font-semibold">
+            {{ operation.details.success ? 'Completada' : 'Fallida' }}
+          </span>
+        </div>
+
+        <!-- Trading Pairs -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-muted-foreground">Par A-B</span>
+            <span class="text-foreground font-semibold"
+              >{{ operation.details.operation.trade.symbol.a }}-{{ operation.details.operation.trade.symbol.b }}</span
+            >
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-muted-foreground">Par B-C</span>
+            <span class="text-foreground font-semibold"
+              >{{ operation.details.operation.trade.symbol.b }}-{{ operation.details.operation.trade.symbol.c }}</span
+            >
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-muted-foreground">Par C-A</span>
+            <span class="text-foreground font-semibold"
+              >{{ operation.details.operation.trade.symbol.c }}-{{ operation.details.operation.trade.symbol.a }}</span
+            >
+          </div>
+        </div>
+
+        <!-- Operation Details -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-muted-foreground">Fecha</span>
+            <span class="text-foreground font-semibold">{{ operation.created_at | date: 'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-muted-foreground">Inversión</span>
+            <span class="text-foreground font-semibold"
+              >{{ operation.details.result.initialInvestment | number: '1.2-2' }} USDT</span
+            >
+          </div>
+          <!-- <div class="flex items-center justify-between">
+            <span class="text-muted-foreground">Comisiones</span>
+            <span class="font-semibold text-foreground">{{ operation.details.result.fees | number:'1.2-2' }} USDT</span>
+          </div> -->
+          <div class="flex items-center justify-between">
+            <span class="text-muted-foreground">Beneficio</span>
+            <span [ngClass]="getProfitColor(operation.details.operation.profit.percent)" class="font-semibold">
+              {{ operation.details.operation.profit.percent > 0 ? '+' : ''
+              }}{{ operation.details.operation.profit.percent | number: '1.2-2' }}%
+            </span>
+          </div>
+        </div>
+
+        <!-- Trade Details -->
+        <div class="border-border mt-4 border-t pt-4">
+          <h4 class="text-foreground mb-2 font-semibold">Detalles de la operación</h4>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-muted-foreground">Ruta</span>
+              <span class="text-foreground font-semibold">{{ operation.details.operation.trade.route }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-muted-foreground">Tiempo de ejecución</span>
+              <span class="text-foreground font-semibold">{{ operation.details.operation.executionTime }}ms</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Message (if any) -->
+        <div *ngIf="!operation.details.success" class="mt-4 rounded-md bg-red-50 p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-red-800">Error en la operación</h3>
+              <div class="mt-2 text-sm text-red-700">
+                <p>{{ getErrorMessage(operation.details.error).msg }}</p>
+                <p class="mt-1">Código: {{ getErrorMessage(operation.details.error).code }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

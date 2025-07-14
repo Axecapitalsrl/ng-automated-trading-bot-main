@@ -1,0 +1,192 @@
+<form class="my-10 space-y-6" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="text-center">
+    <h2 class="text-foreground mb-1 text-3xl font-semibold">Registro <span class="text-primary">!</span></h2>
+    <p class="text-muted-foreground text-sm">Comienza tu experiencia con Xmart Bot</p>
+  </div>
+
+  <div class="space-y-3 text-left">
+    <!-- Full Name -->
+    <div class="form__group">
+      <div class="relative">
+        <input
+          type="text"
+          id="full_name"
+          [ngClass]="{ 'is__invalid-input': submitted && f['full_name'].errors }"
+          class="peer block"
+          placeholder=" "
+          formControlName="full_name" />
+        <label
+          for="full_name"
+          [ngClass]="{ 'peer-focus:text-destructive!': submitted && f['full_name'].errors }"
+          class="bg-background text-muted-foreground peer-focus:text-primary absolute top-2 z-10 origin-[0] -translate-y-4 scale-95 transform px-2 text-sm duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-95 peer-focus:px-2 ltr:left-1 rtl:right-1">
+          Nombre completo
+        </label>
+      </div>
+      <div *ngIf="submitted && f['full_name'].errors" class="is__invalid-error">
+        <div *ngIf="f['full_name'].errors['required']">Campo requerido</div>
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="form__group">
+      <div class="relative">
+        <input
+          type="text"
+          id="email"
+          [ngClass]="{ 'is__invalid-input': submitted && f['email'].errors }"
+          class="peer block"
+          placeholder=" "
+          formControlName="email" />
+        <label
+          for="email"
+          [ngClass]="{ 'peer-focus:text-destructive!': submitted && f['email'].errors }"
+          class="bg-background text-muted-foreground peer-focus:text-primary absolute top-2 z-10 origin-[0] -translate-y-4 scale-95 transform px-2 text-sm duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-95 peer-focus:px-2 ltr:left-1 rtl:right-1">
+          Correo electrónico
+        </label>
+      </div>
+      <div *ngIf="submitted && f['email'].errors" class="is__invalid-error">
+        <div *ngIf="f['email'].errors['required']">Campo requerido</div>
+        <div *ngIf="f['email'].errors['email']">El correo electrónico debe ser válido</div>
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="form__group">
+      <div class="relative">
+        <input
+          [type]="passwordTextType ? 'text' : 'password'"
+          id="password"
+          [ngClass]="{ 'is__invalid-input': submitted && f['password'].errors }"
+          class="peer block"
+          placeholder=" "
+          formControlName="password" />
+        <label
+          for="password"
+          [ngClass]="{ 'peer-focus:text-destructive!': submitted && f['password'].errors }"
+          class="bg-background text-muted-foreground peer-focus:text-primary absolute top-2 z-10 origin-[0] -translate-y-4 scale-95 transform px-2 text-sm duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-95 peer-focus:px-2 ltr:left-1 rtl:right-1">
+          Contraseña
+        </label>
+        <span
+          class="text-muted-foreground absolute top-2 cursor-pointer ltr:right-3 rtl:left-3"
+          (click)="togglePasswordTextType()">
+          <svg-icon
+            [src]="
+              !passwordTextType
+                ? 'assets/icons/heroicons/outline/eye-off.svg'
+                : 'assets/icons/heroicons/outline/eye.svg'
+            "
+            [svgClass]="'h-5 w-5'">
+          </svg-icon>
+        </span>
+      </div>
+      <div *ngIf="submitted && f['password'].errors" class="is__invalid-error">
+        <div *ngIf="f['password'].errors['required']">Campo requerido</div>
+        <div *ngIf="f['password'].errors['minlength']">La contraseña debe tener al menos 8 caracteres</div>
+      </div>
+    </div>
+
+    <!-- Password Meeter -->
+    <div class="grid grid-cols-4 gap-2">
+      <div class="rounded-xs bg-muted h-1"></div>
+      <div class="rounded-xs bg-muted h-1"></div>
+      <div class="rounded-xs bg-muted h-1"></div>
+      <div class="rounded-xs bg-muted h-1"></div>
+    </div>
+    <span class="text-muted-foreground text-xs">
+      Usa 8 o más caracteres con una mezcla de letras, números y símbolos.
+    </span>
+
+    <!-- Confirm Password -->
+    <div class="form__group">
+      <div class="relative">
+        <input
+          [type]="confirmPasswordTextType ? 'text' : 'password'"
+          id="confirm-password"
+          [ngClass]="{ 'is__invalid-input': submitted && f['confirmPassword'].errors }"
+          class="peer block"
+          placeholder=" "
+          formControlName="confirmPassword" />
+        <label
+          for="confirm-password"
+          [ngClass]="{ 'peer-focus:text-destructive!': submitted && f['confirmPassword'].errors }"
+          class="bg-background text-muted-foreground peer-focus:text-primary absolute top-2 z-10 origin-[0] -translate-y-4 scale-95 transform px-2 text-sm duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-95 peer-focus:px-2 ltr:left-1 rtl:right-1">
+          Confirmar contraseña
+        </label>
+        <span
+          class="text-muted-foreground absolute top-2 cursor-pointer ltr:right-3 rtl:left-3"
+          (click)="toggleConfirmPasswordTextType()">
+          <svg-icon
+            [src]="
+              !confirmPasswordTextType
+                ? 'assets/icons/heroicons/outline/eye-off.svg'
+                : 'assets/icons/heroicons/outline/eye.svg'
+            "
+            [svgClass]="'h-5 w-5'">
+          </svg-icon>
+        </span>
+      </div>
+      <div *ngIf="submitted && f['confirmPassword'].errors" class="is__invalid-error">
+        <div *ngIf="f['confirmPassword'].errors['required']">Campo requerido</div>
+        <div *ngIf="form.errors?.['passwordMismatch']">Las contraseñas no coinciden</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between space-x-3">
+    <div class="flex items-center gap-1">
+      <input
+        id="accept-term"
+        name="accept-term"
+        type="checkbox"
+        formControlName="acceptTerms"
+        [ngClass]="{ 'is__invalid-input': submitted && f['acceptTerms'].errors }" />
+      <label for="accept-term" class="text-muted-foreground ml-2 block text-sm"> Acepto los </label>
+      <app-button
+        (click)="downloadTerms()"
+        impact="none"
+        tone="primary"
+        shape="rounded"
+        size="small">
+        Términos y condiciones
+      </app-button>
+    </div>
+  </div>
+  <div *ngIf="submitted && f['acceptTerms'].errors" class="is__invalid-error">
+    <div>Debes aceptar los términos y condiciones</div>
+  </div>
+
+  <!-- Submit Button -->
+  <div class="space-y-2">
+    <app-button
+      full
+      impact="bold"
+      tone="primary"
+      shape="rounded"
+      size="medium"
+      [disabled]="(loading$ | async) || form.invalid">
+      <ng-container *ngIf="loading$ | async; else notLoading">
+        <svg class="-ml-1 mr-3 h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Cargando...
+      </ng-container>
+      <ng-template #notLoading> Registrarse </ng-template>
+    </app-button>
+
+    <div *ngIf="error$ | async as error" class="text-destructive text-center text-sm">
+      <p>Error al registrarse. Por favor, verifica tus datos e intenta nuevamente.</p>
+    </div>
+  </div>
+
+  <!-- Sign-in -->
+  <div class="text-muted-foreground flex items-center text-sm">
+    ¿Ya tienes una cuenta?
+    <app-button routerLink="/auth/sign-in" impact="none" tone="primary" shape="rounded" size="small">
+      Iniciar sesión
+    </app-button>
+  </div>
+</form>

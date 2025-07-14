@@ -1,0 +1,6 @@
+<button [disabled]="disabled() || loading()" [type]="type()" (click)="onButtonClick()" [ngClass]="classes">
+  <ng-container *ngIf="!loading()">
+    <ng-content></ng-content>
+  </ng-container>
+  <span *ngIf="loading()" class="inline-block animate-spin">⟳</span>
+</button>

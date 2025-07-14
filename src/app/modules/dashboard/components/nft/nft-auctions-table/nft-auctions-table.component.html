@@ -1,0 +1,94 @@
+<div class="bg-background flex-col rounded-lg px-8 py-8 sm:flex-row">
+  <div class="mb-4 flex items-center justify-between">
+    <div class="flex-col items-center">
+      <h3 class="text-md text-foreground font-bold">Operaciones</h3>
+    </div>
+  </div>
+
+  <div class="relative overflow-x-auto">
+    <table class="min-w-[700px] w-full table-auto">
+      <thead class="text-muted-foreground text-xs uppercase">
+        <tr>
+          <th class="min-w-[120px] py-3 px-4 text-left">Robot</th>
+          <th class="min-w-[100px] py-3 px-4 text-right">Par A-B</th>
+          <th class="min-w-[100px] py-3 px-4 text-right">Par B-C</th>
+          <th class="min-w-[100px] py-3 px-4 text-right">Par C-A</th>
+          <th class="min-w-[140px] py-3 px-4 text-right">Fecha Operación</th>
+          <th class="min-w-[100px] py-3 px-4 text-right">Profit</th>
+          <th class="min-w-[100px] py-3 px-4 text-right">Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="loading$ | async" class="border-border border-b border-dashed">
+          <td colspan="7" class="py-4 text-center">
+            <div class="flex justify-center">
+              <svg class="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+          </td>
+        </tr>
+        <ng-container *ngIf="!(loading$ | async)">
+          <tr *ngIf="!operations.length">
+            <td colspan="7" class="text-muted-foreground py-4 text-center">Sin datos</td>
+          </tr>
+          <tr
+            *ngFor="let operation of operations"
+            (click)="openOperationDetails(operation)"
+            class="border-border hover:bg-card cursor-pointer border-b border-dashed">
+            <td class="py-2 pr-2">
+              <div class="flex items-center">
+                <img src="assets/images/binance-svgrepo-com.svg" class="h-8 w-8" alt="Binance" />
+                <div class="ml-2 flex flex-col justify-items-start">
+                  <a href="#" class="text-foreground text-sm font-semibold">{{ operation.botType.name }}</a>
+                </div>
+              </div>
+            </td>
+            <td class="py-2 pl-2 text-right">
+              <span class="text-muted-foreground text-sm font-semibold">{{
+                operation.details.operation.trade.symbol.a
+              }}</span>
+            </td>
+            <td class="py-2 pl-2 text-right">
+              <span class="text-muted-foreground text-sm font-semibold">{{
+                operation.details.operation.trade.symbol.b
+              }}</span>
+            </td>
+            <td class="py-2 pl-2 text-right">
+              <span class="text-muted-foreground text-sm font-semibold">{{
+                operation.details.operation.trade.symbol.c
+              }}</span>
+            </td>
+            <td class="py-2 pl-2 text-right">
+              <span class="text-muted-foreground text-sm font-semibold">{{
+                operation.created_at | date: 'dd/MM/yyyy HH:mm'
+              }}</span>
+            </td>
+            <td class="py-2 pl-2 text-right">
+              <span
+                [ngClass]="{
+                  'text-green-500': operation.details.operation.profit.percent > 0,
+                  'text-red-500': operation.details.operation.profit.percent < 0
+                }"
+                class="text-sm font-bold">
+                {{ operation.details.operation.profit.percent > 0 ? '+' : ''
+                }}{{ operation.details.operation.profit.percent | number: '1.2-2' }}%
+              </span>
+            </td>
+            <td class="py-2 pl-2 text-right">
+              <span
+                [ngClass]="{ 'text-green-500': operation.details.success, 'text-red-500': !operation.details.success }"
+                class="text-sm font-bold">
+                {{ operation.details.success ? 'Completada' : 'Fallida' }}
+              </span>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<app-operation-detail-modal [operation]="selectedOperation" [isOpen]="isModalOpen" (closeModal)="closeModal()">
+</app-operation-detail-modal>

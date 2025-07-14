@@ -1,0 +1,93 @@
+<div class="bg-background flex-col rounded-lg px-8 py-8 sm:flex-row">
+  <div class="mb-4 flex items-center justify-between">
+    <div class="flex-col items-center">
+      <h3 class="text-md text-foreground font-bold">Mis Robots</h3>
+    </div>
+  </div>
+
+  <div class="relative overflow-x-auto">
+    <table class="min-w-[900px] w-full table-auto">
+      <thead class="text-muted-foreground text-xs uppercase">
+        <tr>
+          <th class="min-w-[140px] py-3 px-4 text-left">Exchange / Tipo</th>
+          <th class="min-w-[100px] py-3 px-4 text-right">Asset</th>
+          <th class="min-w-[120px] py-3 px-4 text-right">Monto</th>
+          <th class="min-w-[120px] py-3 px-4 text-right">Monto Mínimo</th>
+          <th class="min-w-[120px] py-3 px-4 text-right">Monto Máximo</th>
+          <th class="min-w-[80px] py-3 px-4 text-right">LS</th>
+          <th class="min-w-[100px] py-3 px-4 text-right">Estado</th>
+          <th class="min-w-[120px] py-3 px-4 text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="loading$ | async" class="border-border border-b border-dashed">
+          <td colspan="7" class="py-4 text-center">
+            <div class="flex justify-center">
+              <svg class="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+          </td>
+        </tr>
+        <ng-container *ngIf="!(loading$ | async)">
+          <tr *ngIf="!bots?.length">
+            <td colspan="7" class="text-muted-foreground py-4 text-center">Sin datos</td>
+          </tr>
+          <tr *ngFor="let bot of bots">
+            <td class="py-2 pr-2">
+              <div class="flex items-center">
+                <img 
+                  [src]="bot?.botType?.exchange_id === 'bitget' ? 'assets/images/bitget-token-new-bgb-logo.svg' : 'assets/images/binance-svgrepo-com.svg'" 
+                  class="h-8 w-8" 
+                  [alt]="bot?.botType?.exchange_id === 'bitget' ? 'Bitget' : 'Binance'" />
+                <div class="ml-2 flex flex-col justify-items-start">
+                  <a href="#" class="text-foreground text-sm font-semibold">{{ bot?.botType?.name }}</a>
+                </div>
+              </div>
+            </td>
+            <td class="py-2 pl-2 text-right">
+              <span class="text-muted-foreground text-sm font-semibold">{{ bot.currencies || '-' }}</span>
+            </td>
+            <td class="py-2 pl-2 text-right">
+              <span class="text-muted-foreground text-sm font-semibold">{{ bot.amount || '-' }}</span>
+            </td>
+            <td class="py-2 pl-2 text-right">
+              <span class="text-muted-foreground text-sm font-semibold">{{ bot.amount_min || '-' }}</span>
+            </td>
+            <td class="py-2 pl-2 text-right">
+              <span class="text-muted-foreground text-sm font-semibold">{{ bot.amount_max || '-' }}</span>
+            </td>
+            <td class="py-2 pl-2 text-right">
+              <span class="text-muted-foreground text-sm font-semibold">{{ bot.stop_loss ? bot.stop_loss + '%' : '-' }}</span>
+            </td>
+            <td class="py-2 pl-2 text-right">
+              <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': bot.status === 'ACTIVE',
+                  'bg-red-100 text-red-800': bot.status === 'INACTIVE' || bot.status === 'ERROR',
+                  'bg-yellow-100 text-yellow-800': bot.status === 'PAUSED'
+                }">
+                {{ bot.status || '-' }}
+              </span>
+            </td>
+            <td class="py-2 pl-2 text-right">
+              <div class="flex justify-end space-x-2">
+                <button class="text-muted-foreground hover:text-foreground rounded-md p-2" (click)="onEdit(bot)">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                  </svg>
+                </button>
+                <button class="text-muted-foreground hover:text-red-500 rounded-md p-2" (click)="onDelete(bot)">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>
